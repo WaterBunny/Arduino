@@ -64,9 +64,21 @@ void setup(){
 //////////////
 //// Loop ////
 //////////////
+long blaBlubb = 0; // TRASH
 void loop(){
   if(storageLogFile){
     
+    // TRASH START - just to get some values in Logfile - Replace Me with usefull stuff please!!
+    unsigned long currentMillis = millis();
+ 
+    if(currentMillis - blaBlubb > 5000) {
+      blaBlubb = currentMillis;
+      String newLine = "";
+      newLine += String(blaBlubb);
+      newLine += String(",1,2,3");
+      storage_write(newLine);
+    }
+    // TRASH END
   }else{
     // Error-Blinking if SD-Card or Logfile is nor ready
     digitalWrite(STATUS_LED,HIGH);
