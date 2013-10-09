@@ -26,7 +26,7 @@
 ///////////////////////
 void serial_init(){
   Serial.begin(SERIAL_BAUD);
-  serialInputString.reserve(200); // Max. Size of serial command
+  serialInputString.reserve(10); // Max. Size in byte of serial command
 }
 
 //////////////////////
@@ -37,15 +37,17 @@ void serial_init(){
 void serialEvent(){
   while (Serial.available()){
     char inChar = (char)Serial.read();
-    serialInputString += inChar;
-    Serial.print(inChar); // Show command in Terminal
+    if((inChar > 32 && inChar < 127) || inChar == 13 || inChar == 10){ // Ignore non-printable characters (beside CR/LF (ENTER))
+      serialInputString += inChar;
+      Serial.print(inChar); // Show command in Terminal
 
-    if (inChar == '\n'){
-      serialInputString.trim(); // Remove line break
-      Serial.println(serialInputString); // Print command to console
-      serial_process_cmd(); // Interpret given command
-      serialInputString = ""; // Reset command-variable
-      Serial.print("> "); // Show prompt
+      if (inChar == '\n'){
+        serialInputString.trim(); // Remove line break
+        Serial.println(serialInputString); // Print command to console
+        serial_process_cmd(); // Interpret given command
+        serialInputString = ""; // Reset command-variable
+        Serial.print("> "); // Show prompt
+      }
     }
   }
 }
