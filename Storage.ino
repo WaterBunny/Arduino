@@ -52,9 +52,10 @@ void storage_read(){
 //////////////////////////
 //// Write to Logfile ////
 //////////////////////////
-void storage_write(){
-//    storageLogFile.seek(storageLogFile.size()); // Jump to End of File
-//    storageLogFile.println("clear");
+void storage_write(String line){
+  storageLogFile.seek(storageLogFile.size()); // Jump to End of File
+  storageLogFile.println(line);
+  storageLogFile.flush();
 }
 
 ///////////////////////
