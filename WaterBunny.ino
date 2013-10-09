@@ -20,23 +20,37 @@
 */
 #include <SD.h>
 
-//// General
-const int statusLed = 6; // Pin of status LED
+///////////////////////
+//// Configuration ////
+///////////////////////
+// General
+#define STATUS_LED 6 // Pin of status LED
 
-//// Serial
+// Serial
+#define SERIAL_BAUD 9600
+
+// SD-Storage
+#define STORAGE_LOGFILE_NAME "BUNNY.LOG" // Name of LogFile on SD-Card
+#define STORAGE_CHIPSELECT 10 // ChipSelect-Pin for SD-Card on SPI-Bus
+
+////////////////////////////////////////////
+//// Initialisation of global variables ////
+////////////////////////////////////////////
+// Serial
 String serialInputString = ""; // String/Command typed in serial console to Bunny
 
-//// SD-Storage
+// SD-Storage
 File storageLogFile;
-char* storageLogFileName = "BUNNY.LOG"; // Name of LogFile on SD-Card
-const int storageChipSelect = 10; // ChipSelect-Pin for SD-Card on SPI-Bus
 
+///////////////
+//// Setup ////
+///////////////
 void setup(){
   //// General
-  pinMode(statusLed, OUTPUT);
+  pinMode(STATUS_LED, OUTPUT);
   
   //// Init Serial Interface
-  Serial.begin(9600);
+  Serial.begin(SERIAL_BAUD);
   serialInputString.reserve(200); // Max. Size of serial command
   
   //// Init SD-Card
@@ -46,11 +60,11 @@ void setup(){
   pinMode(10, OUTPUT);
   
   Serial.println("Initializing SD-Card Storage ...");
-  if (!SD.begin(storageChipSelect)){
+  if (!SD.begin(STORAGE_CHIPSELECT)){
     Serial.println("initialization failed!");
   }else{
     Serial.println("initialization done.");
-    storageLogFile = SD.open(storageLogFileName, FILE_WRITE); // Open File for Read & Write
+    storageLogFile = SD.open(STORAGE_LOGFILE_NAME, FILE_WRITE); // Open File for Read & Write
   }
   
   //// Show prompt
@@ -62,9 +76,9 @@ void loop(){
     
   }else{
     // Error-Blinking if SD-Card or Logfile is nor ready
-    digitalWrite(statusLed,HIGH);
+    digitalWrite(STATUS_LED,HIGH);
     delay(500);
-    digitalWrite(statusLed,LOW);
+    digitalWrite(STATUS_LED,LOW);
     delay(500);
   }
 }
@@ -95,8 +109,8 @@ void serial_process_cmd(){
   }else if(serialInputString == "clear"){
     //// Clear the logfile
     storageLogFile.close();
-    SD.remove(storageLogFileName);
-    storageLogFile = SD.open(storageLogFileName, FILE_WRITE);
+    SD.remove(STORAGE_LOGFILE_NAME);
+    storageLogFile = SD.open(STORAGE_LOGFILE_NAME, FILE_WRITE);
     Serial.println("LogFile cleared");
     Serial.print("New Size: ");
     Serial.println(storageLogFile.size());
