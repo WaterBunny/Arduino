@@ -26,14 +26,14 @@
 //// Configuration ////
 ///////////////////////
 // General
-#define STATUS_LED 6 // Pin of status LED
+#define STATUS_LED 7 // Pin of status LED
 
 // Serial
 #define SERIAL_BAUD 9600 // Baud-Rate of serial port
 
 // SD-Storage
 #define STORAGE_LOGFILE_NAME "BUNNY.LOG" // Name of LogFile on SD-Card
-#define STORAGE_CHIPSELECT 10 // ChipSelect-Pin for SD-Card on SPI-Bus
+#define STORAGE_CHIPSELECT 6 // ChipSelect-Pin for SD-Card on SPI-Bus
 
 /////////////////////////////////////
 //// Initialise global variables ////
