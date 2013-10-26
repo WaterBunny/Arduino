@@ -44,7 +44,7 @@ void storage_read(){
 //////////////////////////
 //// Write to Logfile ////
 //////////////////////////
-void storage_write(String line){
+void storage_write(String &line){
   storageLogFile.println(line);
   storageLogFile.sync();
 }

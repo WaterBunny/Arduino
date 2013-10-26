@@ -25,6 +25,8 @@
 #include <DS1307RTC.h>
 #include <Wire.h>
 #include <Time.h>
+#include <SPI.h>
+#include <ADXL362.h>
 
 ///////////////////////
 //// Configuration ////
@@ -52,6 +54,10 @@ String serialInputString = ""; // String/Command typed in serial console to Bunn
 SdFat storageSdCard;
 SdFile storageLogFile;
 
+// ACC
+ADXL362 acc;
+int accX, accY, accZ, accTemp;
+
 ///////////////
 //// Setup ////
 ///////////////
@@ -61,6 +67,9 @@ void setup(){
   
   // Init Serial Interface
   serial_init();
+  
+  // Init Accelerometer
+  acc_init();
   
   // Init SD-Card
   storage_init();
@@ -81,9 +90,19 @@ void loop(){
  
     if(currentMillis - blaBlubb > 5000) {
       blaBlubb = currentMillis;
+      
+      acc.readXYZTData(accX, accY, accZ, accTemp); 
+
       String newLine = "";
       newLine += rtcGetTimestamp();
-      newLine += String(",1,2,3");
+      newLine += ",";
+      newLine += accX;
+      newLine += ",";
+      newLine += accY;
+      newLine += ",";
+      newLine += accZ;
+      newLine += ",";
+      newLine += accTemp;
       storage_write(newLine);
     }
     // TRASH END
