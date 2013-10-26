@@ -57,6 +57,8 @@ String rtcGetTimestamp(){
   String timestamp = "";
 
   RTC.read(rtcTime);
+  
+  // Format: YYYY-MM-DD HH:MM:SS
   timestamp += tmYearToCalendar(rtcTime.Year);
   timestamp += "-";
   timestamp += rtcTime.Month;

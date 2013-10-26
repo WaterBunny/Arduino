@@ -76,6 +76,7 @@ void serial_process_cmd(){
   }else if(serialInputString == "read"){
     // Print content of Logfile
     Serial.println(F("---- START LOG DUMP ----"));
+    Serial.println(F(STORAGE_HEADER));
     storage_read();
     Serial.println(F("---- END LOG DUMP ----"));
   }else if(serialInputString == "clear"){
