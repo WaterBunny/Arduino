@@ -25,59 +25,48 @@
 //// Init-Funktion ////
 ///////////////////////
 void storage_init(){
-  // Note that even if it's not used as the CS pin, the hardware SS pin 
-  // (10 on most Arduino boards, 53 on the Mega) must be left as an output 
-  // or the SD library functions will not work.
-  pinMode(10, OUTPUT);
-  
   Serial.println("Initializing SD-Card Storage ...");
-  if (!SD.begin(STORAGE_CHIPSELECT)){
-    Serial.println("initialization failed!");
-  }else{
-    Serial.println("initialization done.");
-    storageLogFile = SD.open(STORAGE_LOGFILE_NAME, FILE_WRITE); // Open File for Read & Write
-  }
+  if (!storageSdCard.begin(STORAGE_CHIPSELECT, SPI_HALF_SPEED)) storageSdCard.initErrorHalt();
+
+  storageLogFile.open(STORAGE_LOGFILE_NAME, O_RDWR | O_APPEND | O_CREAT);
+  if(!storageLogFile.isOpen()) storageSdCard.errorHalt_P(PSTR("file.open"));
 }
 
 //////////////////////
 //// Read Logfile ////
 //////////////////////
 void storage_read(){
-  storageLogFile.seek(0); // Jump to beginning of File   
-  while(storageLogFile.available()){
-    Serial.write(storageLogFile.read());
-  }
+  int data;
+  storageLogFile.rewind(); // Jump to beginning of File
+  while((data = storageLogFile.read()) >= 0) Serial.write(data);
 }
 
 //////////////////////////
 //// Write to Logfile ////
 //////////////////////////
 void storage_write(String line){
-  storageLogFile.seek(storageLogFile.size()); // Jump to End of File
   storageLogFile.println(line);
-  storageLogFile.flush();
+  storageLogFile.sync();
 }
 
 ///////////////////////
 //// Clear Logfile ////
 ///////////////////////
 void storage_clear(){
-  storageLogFile.close();
-  SD.remove(STORAGE_LOGFILE_NAME);
-  storageLogFile = SD.open(STORAGE_LOGFILE_NAME, FILE_WRITE);
+  storageLogFile.truncate(0);
+  storageLogFile.sync();
 }
 
 /////////////////////
 //// Show health ////
 /////////////////////
 void storage_health(){
-  Serial.print("SD-CARD STATUS: ");
-  if(storageLogFile) Serial.println("OK");
-  else Serial.println("ERROR - SD-Card not initialized or LogFile not opened.");
-    
-  Serial.print("SD-CARD LOGFILE SIZE: ");
-  if(storageLogFile){
-    storageLogFile.seek(0); // Jump to beginning of File
-    Serial.println(storageLogFile.size());
-  }else Serial.println("ERROR - LogFile not opened.");
+  Serial.print(F("SD-CARD LOGFILE STATUS: "));
+  if(storageLogFile.isOpen()) Serial.println(F("OK"));
+  else Serial.println(F("ERROR - LogFile not opened."));
+  
+  Serial.print(F("SD-CARD LOGFILE SIZE: "));
+  if(storageLogFile.isOpen()){
+    Serial.println(storageLogFile.fileSize());
+  }else Serial.println(F("ERROR - LogFile not opened."));
 }

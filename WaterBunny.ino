@@ -20,7 +20,11 @@
   with this program; if not, write to the Free Software Foundation, Inc.,
   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-#include <SD.h>
+#include <SdFat.h>
+#include <SdFatUtil.h>  // define FreeRam()
+#include <DS1307RTC.h>
+#include <Wire.h>
+#include <Time.h>
 
 ///////////////////////
 //// Configuration ////
@@ -38,11 +42,15 @@
 /////////////////////////////////////
 //// Initialise global variables ////
 /////////////////////////////////////
+// Time Element
+tmElements_t rtcTime; // Actual time of RTC
+
 // Serial
 String serialInputString = ""; // String/Command typed in serial console to Bunny
 
 // SD-Storage
-File storageLogFile; // Filehandle of logfile
+SdFat storageSdCard;
+SdFile storageLogFile;
 
 ///////////////
 //// Setup ////
@@ -58,7 +66,7 @@ void setup(){
   storage_init();
   
   // Show prompt
-  Serial.print("> ");
+  Serial.print(F("> "));
 }
 
 //////////////
@@ -66,7 +74,7 @@ void setup(){
 //////////////
 long blaBlubb = 0; // TRASH
 void loop(){
-  if(storageLogFile){
+  if(storageLogFile.isOpen()){
     
     // TRASH START - just to get some values in Logfile - Replace Me with usefull stuff please!!
     unsigned long currentMillis = millis();
@@ -74,7 +82,7 @@ void loop(){
     if(currentMillis - blaBlubb > 5000) {
       blaBlubb = currentMillis;
       String newLine = "";
-      newLine += String(blaBlubb);
+      newLine += rtcGetTimestamp();
       newLine += String(",1,2,3");
       storage_write(newLine);
     }

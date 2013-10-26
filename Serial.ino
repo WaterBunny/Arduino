@@ -37,16 +37,15 @@ void serial_init(){
 void serialEvent(){
   while (Serial.available()){
     char inChar = (char)Serial.read();
-    if((inChar > 32 && inChar < 127) || inChar == 13 || inChar == 10){ // Ignore non-printable characters (beside CR/LF (ENTER))
+    if((inChar >= 32 && inChar < 127) || inChar == 13 || inChar == 10){ // Ignore non-printable characters (beside CR/LF (ENTER) and Space)
       serialInputString += inChar;
       Serial.print(inChar); // Show command in Terminal
 
       if (inChar == '\n'){
         serialInputString.trim(); // Remove line break
-        Serial.println(serialInputString); // Print command to console
         serial_process_cmd(); // Interpret given command
         serialInputString = ""; // Reset command-variable
-        Serial.print("> "); // Show prompt
+        Serial.print(F("> ")); // Show prompt
       }
     }
   }
@@ -56,12 +55,15 @@ void serialEvent(){
 //// Show Command Help ////
 ///////////////////////////
 void serial_show_help(){
-  Serial.println("### Welcome to WaterBunny CLI ###");
-  Serial.println("Try one of these to talk to the Bunny");
-  Serial.println("  help   - Show this help and the available commands");
-  Serial.println("  read   - Gives you the output of the logfile");
-  Serial.println("  clear  - Clears the logfile");
-  Serial.println("  health - Show some health of Bunny");
+  Serial.println(F("### Welcome to WaterBunny CLI ###"));
+  Serial.println(F("Try one of these to talk to the Bunny"));
+  Serial.println(F("  help    - Show this help and the available commands"));
+  Serial.println(F("  read    - Gives you the output of the logfile"));
+  Serial.println(F("  clear   - Clears the logfile"));
+  Serial.println(F("  time    - Displays the Date and Time"));
+  Serial.println(F("  settime - Configures the Date and Time"));
+  Serial.println(F("    Use: settime HH:MM:SS DD-MM-YYYY"));
+  Serial.println(F("  health  - Show some health of Bunny"));
 }
 
 //////////////////////////////////////
@@ -73,25 +75,33 @@ void serial_process_cmd(){
     serial_show_help();
   }else if(serialInputString == "read"){
     // Print content of Logfile
-    Serial.println("---- START LOG DUMP ----");
+    Serial.println(F("---- START LOG DUMP ----"));
     storage_read();
-    Serial.println("---- END LOG DUMP ----");
+    Serial.println(F("---- END LOG DUMP ----"));
   }else if(serialInputString == "clear"){
     // Clear the logfile
     storage_clear();
-    Serial.println("LogFile cleared");
-    Serial.print("New Size: ");
-    Serial.println(storageLogFile.size());
+    Serial.println(F("LogFile cleared"));
+  }else if(serialInputString == "time"){
+    // Displays the Date and Time
+    Serial.println(rtcGetTimestamp());
+  }else if(serialInputString.substring(0,7) == "settime"){
+    // Configures the Date and Time
+    rtcSetTime(serialInputString.substring(8));
   }else if(serialInputString == "health"){
     // Show some Health-Status
-    Serial.println("---- START HEALTH ----");
-
+    Serial.println(F("---- START HEALTH ----"));
+    
+    // General
+    Serial.print(F("RAM FREE: "));
+    Serial.println(FreeRam());
+    
     // Storage
-    storage_health();    
+    storage_health();
 
-    Serial.println("---- END HEALTH ----");
+    Serial.println(F("---- END HEALTH ----"));
   }else{
     // Command not found
-    Serial.println("Command not found");
+    Serial.println(F("Command not found"));
   }
 }
