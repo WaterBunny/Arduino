@@ -32,7 +32,11 @@
 ///////////////////////
 // General
 #define STATUS_LED 7 // Pin of status LED
+
+// Button
 #define BUTTON 3 // Pin of Button
+#define BUTTON_INT 1 // Interrupt of Button (see http://arduino.cc/en/Reference/attachInterrupt)
+#define BUTTON_HOLD_TIME 1000 // Time in ms to identify a button press as "hold"
 
 // Serial
 #define SERIAL_BAUD 9600 // Baud-Rate of serial port
@@ -45,6 +49,16 @@
 /////////////////////////////////////
 //// Initialise global variables ////
 /////////////////////////////////////
+// General
+boolean startRecording = false;
+boolean lastRecordingState = false;
+boolean recordWatermark = false;
+
+// Button
+int buttonLastState = HIGH;
+long buttonUpTime;
+long buttonDownTime;
+
 // Time Element
 tmElements_t rtcTime; // Actual time of RTC
 
@@ -65,8 +79,9 @@ int accX, accY, accZ, accTemp;
 void setup(){
   // General
   pinMode(STATUS_LED, OUTPUT);
-  pinMode(BUTTON, INPUT);
-  digitalWrite(BUTTON, HIGH);
+
+  // Init Button
+  button_init();
   
   // Init Serial Interface
   serial_init();
@@ -86,18 +101,43 @@ void setup(){
 //////////////
 long blaBlubb = 0; // TRASH
 void loop(){
-  if(storageLogFile.isOpen()){
-    
-    // TRASH START - just to get some values in Logfile - Replace Me with usefull stuff please!!
+  if(startRecording){
     unsigned long currentMillis = millis();
- 
-    if(currentMillis - blaBlubb > 5000) {
-//      Serial.println(digitalRead(BUTTON));
+    
+    if(lastRecordingState != startRecording){
+      // Show the recording state with the LED
+      digitalWrite(STATUS_LED,HIGH);
       
+      Serial.println(F("Recording started"));
+      lastRecordingState = startRecording;
+    }
+    
+    // If Button is pressed, write a Watermark to Logfile
+    if(recordWatermark){
+      String newLine = "";
+      newLine += rtc_get_timestamp();
+      newLine += ",";
+      newLine += currentMillis;
+      newLine += ",-,-,-,-";
+      storage_write(newLine);
+      
+      recordWatermark = false;
+      
+      Serial.println(F("Watermark logged"));
+      
+      // Flash LED to show the Recording of the Watermark
+      digitalWrite(STATUS_LED,LOW);
+      delay(200);
+      digitalWrite(STATUS_LED,HIGH);
+    }
+      
+      
+    // TRASH START - just to get some values in Logfile - Replace Me with usefull stuff please!! 
+    if(currentMillis - blaBlubb > 5000) {
+  
       blaBlubb = currentMillis;
       
       acc.readXYZTData(accX, accY, accZ, accTemp); 
-
       String newLine = "";
       newLine += rtc_get_timestamp();
       newLine += ",";
@@ -114,10 +154,12 @@ void loop(){
     }
     // TRASH END
   }else{
-    // Error-Blinking if SD-Card or Logfile is nor ready
-    digitalWrite(STATUS_LED,HIGH);
-    delay(500);
-    digitalWrite(STATUS_LED,LOW);
-    delay(500);
+    if(lastRecordingState != startRecording){
+      // Show the recording state with the LED
+      digitalWrite(STATUS_LED,LOW);
+      
+      Serial.println(F("Recording stopped"));
+      lastRecordingState = startRecording;
+    }
   }
 }
