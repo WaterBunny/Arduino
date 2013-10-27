@@ -148,7 +148,7 @@ void loop(){
       newLine += ",";
       newLine += accZ;
       newLine += ",";
-      newLine += accTemp;
+      newLine += map(accTemp,-2048,2047,-4000,8500);
       storage_write(newLine);
     }
   }else{
