@@ -95,7 +95,7 @@ void serial_process_cmd(){
     
     // General
     Serial.print(F("RAM FREE: "));
-    Serial.println(FreeRam());
+    Serial.println(free_ram());
     
     // RTC
     rtc_health();
@@ -108,4 +108,14 @@ void serial_process_cmd(){
     // Command not found
     Serial.println(F("Command not found"));
   }
+}
+
+///////////////////////////////////////////////////////////
+//// get free RAM                                      ////
+//// http://playground.arduino.cc/Code/AvailableMemory ////
+///////////////////////////////////////////////////////////
+int free_ram(){
+  extern int __heap_start, *__brkval; 
+  int v; 
+  return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
 }

@@ -21,7 +21,6 @@
   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 #include <SdFat.h>
-#include <SdFatUtil.h>  // define FreeRam()
 #include <DS1307RTC.h>
 #include <Wire.h>
 #include <Time.h>
@@ -33,6 +32,7 @@
 ///////////////////////
 // General
 #define STATUS_LED 7 // Pin of status LED
+#define BUTTON 3 // Pin of Button
 
 // Serial
 #define SERIAL_BAUD 9600 // Baud-Rate of serial port
@@ -65,6 +65,8 @@ int accX, accY, accZ, accTemp;
 void setup(){
   // General
   pinMode(STATUS_LED, OUTPUT);
+  pinMode(BUTTON, INPUT);
+  digitalWrite(BUTTON, HIGH);
   
   // Init Serial Interface
   serial_init();
@@ -90,6 +92,8 @@ void loop(){
     unsigned long currentMillis = millis();
  
     if(currentMillis - blaBlubb > 5000) {
+//      Serial.println(digitalRead(BUTTON));
+      
       blaBlubb = currentMillis;
       
       acc.readXYZTData(accX, accY, accZ, accTemp); 
