@@ -57,13 +57,16 @@ void serialEvent(){
 void serial_show_help(){
   Serial.println(F("### Welcome to WaterBunny CLI ###"));
   Serial.println(F("Try one of these to talk to the Bunny"));
-  Serial.println(F("  help    - Show this help and the available commands"));
-  Serial.println(F("  read    - Gives you the output of the logfile"));
-  Serial.println(F("  clear   - Clears the logfile"));
-  Serial.println(F("  time    - Displays the Date and Time"));
-  Serial.println(F("  settime - Configures the Date and Time"));
+  Serial.println(F("  help      - Show this help and the available commands"));
+  Serial.println(F("  start     - Start recording of data"));
+  Serial.println(F("  stop      - Stop recording of data"));
+  Serial.println(F("  watermark - Write watermark to logfile"));
+  Serial.println(F("  read      - Gives you the output of the logfile"));
+  Serial.println(F("  clear     - Clears the logfile"));
+  Serial.println(F("  time      - Displays the Date and Time"));
+  Serial.println(F("  settime   - Configures the Date and Time"));
   Serial.println(F("    Use: settime HH:MM:SS DD-MM-YYYY"));
-  Serial.println(F("  health  - Show some health of Bunny"));
+  Serial.println(F("  health    - Show some health of Bunny"));
 }
 
 //////////////////////////////////////
@@ -73,6 +76,15 @@ void serial_process_cmd(){
   if(serialInputString == "help" || serialInputString == ""){
     // Show help
     serial_show_help();
+  }else if(serialInputString == "start"){
+    // Start recording of data
+    startRecording = true;
+  }else if(serialInputString == "stop"){
+    // Start recording of data
+    startRecording = false;
+  }else if(serialInputString == "watermark"){
+    // Write watermark to logfile
+    recordWatermark = true;
   }else if(serialInputString == "read"){
     // Print content of Logfile
     Serial.println(F("---- START LOG DUMP ----"));
