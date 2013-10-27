@@ -32,6 +32,7 @@
 ///////////////////////
 // General
 #define STATUS_LED 7 // Pin of status LED
+#define RECORDING_TIME 100 // Record data every x ms
 
 // Button
 #define BUTTON 3 // Pin of Button
@@ -53,6 +54,7 @@
 boolean startRecording = false;
 boolean lastRecordingState = false;
 boolean recordWatermark = false;
+long lastMillis = 0;
 
 // Button
 int buttonLastState = HIGH;
@@ -99,7 +101,6 @@ void setup(){
 //////////////
 //// Loop ////
 //////////////
-long blaBlubb = 0; // TRASH
 void loop(){
   if(startRecording){
     unsigned long currentMillis = millis();
@@ -131,11 +132,9 @@ void loop(){
       digitalWrite(STATUS_LED,HIGH);
     }
       
-      
-    // TRASH START - just to get some values in Logfile - Replace Me with usefull stuff please!! 
-    if(currentMillis - blaBlubb > 5000) {
-  
-      blaBlubb = currentMillis;
+    // Record ACC-Values every x ms
+    if(currentMillis - lastMillis > long(RECORDING_TIME)) {
+      lastMillis = currentMillis;
       
       acc.readXYZTData(accX, accY, accZ, accTemp); 
       String newLine = "";
@@ -152,12 +151,14 @@ void loop(){
       newLine += accTemp;
       storage_write(newLine);
     }
-    // TRASH END
   }else{
+    // Show the recording state with the LED
+    digitalWrite(STATUS_LED,LOW);
+    delay(500);
+    digitalWrite(STATUS_LED,HIGH);
+    delay(500);
+    
     if(lastRecordingState != startRecording){
-      // Show the recording state with the LED
-      digitalWrite(STATUS_LED,LOW);
-      
       Serial.println(F("Recording stopped"));
       lastRecordingState = startRecording;
     }
