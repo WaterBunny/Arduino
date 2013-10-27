@@ -24,7 +24,7 @@
 ///////////////////////////////
 //// Set RTC Time and Date ////
 ///////////////////////////////
-void rtcSetTime(String dateTime){
+void rtc_set_time(String dateTime){
   tmElements_t newTime;
   unsigned int newHour, newMin, newSec, newDay, newMonth, newYear;
   char dateTimeChar[20];
@@ -53,7 +53,7 @@ void rtcSetTime(String dateTime){
 //////////////////////////////
 //// Get Timestamp of RTC ////
 //////////////////////////////
-String rtcGetTimestamp(){
+String rtc_get_timestamp(){
   String timestamp = "";
 
   RTC.read(rtcTime);
@@ -75,4 +75,12 @@ String rtcGetTimestamp(){
   timestamp += rtcTime.Second;
   
   return timestamp;
+}
+
+/////////////////////
+//// Show health ////
+/////////////////////
+void rtc_health(){
+  Serial.print(F("RTC TIMESTAMP: "));
+  Serial.println(rtc_get_timestamp());
 }

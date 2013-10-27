@@ -85,10 +85,10 @@ void serial_process_cmd(){
     Serial.println(F("LogFile cleared"));
   }else if(serialInputString == "time"){
     // Displays the Date and Time
-    Serial.println(rtcGetTimestamp());
+    Serial.println(rtc_get_timestamp());
   }else if(serialInputString.substring(0,7) == "settime"){
     // Configures the Date and Time
-    rtcSetTime(serialInputString.substring(8));
+    rtc_set_time(serialInputString.substring(8));
   }else if(serialInputString == "health"){
     // Show some Health-Status
     Serial.println(F("---- START HEALTH ----"));
@@ -96,6 +96,9 @@ void serial_process_cmd(){
     // General
     Serial.print(F("RAM FREE: "));
     Serial.println(FreeRam());
+    
+    // RTC
+    rtc_health();
     
     // Storage
     storage_health();

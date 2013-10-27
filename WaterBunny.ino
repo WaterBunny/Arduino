@@ -95,7 +95,7 @@ void loop(){
       acc.readXYZTData(accX, accY, accZ, accTemp); 
 
       String newLine = "";
-      newLine += rtcGetTimestamp();
+      newLine += rtc_get_timestamp();
       newLine += ",";
       newLine += accX;
       newLine += ",";
