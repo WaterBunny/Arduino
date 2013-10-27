@@ -61,8 +61,10 @@ String rtc_get_timestamp(){
   // Format: YYYY-MM-DD HH:MM:SS
   timestamp += tmYearToCalendar(rtcTime.Year);
   timestamp += "-";
+  if(rtcTime.Month < 10) timestamp += "0";
   timestamp += rtcTime.Month;
   timestamp += "-";
+  if(rtcTime.Day < 10) timestamp += "0";
   timestamp += rtcTime.Day;
   timestamp += " ";
   if(rtcTime.Hour < 10) timestamp += "0";
