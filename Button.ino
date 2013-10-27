@@ -21,12 +21,18 @@
   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+///////////////////////
+//// Init-Funktion ////
+///////////////////////
 void button_init(){
   pinMode(BUTTON, INPUT);
   digitalWrite(BUTTON, HIGH);
   attachInterrupt(1,button_push,CHANGE);
 }
 
+//////////////////////////////////////////////
+//// Interrupt-Function for button change ////
+//////////////////////////////////////////////
 void button_push(){
   int state = digitalRead(BUTTON);
   
