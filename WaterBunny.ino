@@ -40,7 +40,7 @@
 // SD-Storage
 #define STORAGE_LOGFILE_NAME "BUNNY.LOG" // Name of LogFile on SD-Card
 #define STORAGE_CHIPSELECT 6 // ChipSelect-Pin for SD-Card on SPI-Bus
-#define STORAGE_HEADER "Timestamp,X-Data,Y-Data,Z-Data,Temperature" // First line of data dump
+#define STORAGE_HEADER "Timestamp,CurrentMillis,X-Data,Y-Data,Z-Data,Temperature" // First line of data dump
 
 /////////////////////////////////////
 //// Initialise global variables ////
@@ -96,6 +96,8 @@ void loop(){
 
       String newLine = "";
       newLine += rtc_get_timestamp();
+      newLine += ",";
+      newLine += currentMillis;
       newLine += ",";
       newLine += accX;
       newLine += ",";
