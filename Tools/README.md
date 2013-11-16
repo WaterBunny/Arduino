@@ -1,3 +1,7 @@
+### Serial Connection with Bluetooth
+
+/etc/bluetooth/rfcomm.conf
+```
 #
 # RFCOMM configuration file.
 #
@@ -15,10 +19,7 @@ rfcomm0 {
 	# Description of the connection
 	comment "WaterBunny / NanoQuad";
 }
+```
 
-
-
-
-
-
-sudo rfcomm connect 0
+And then run this command:
+```sudo rfcomm connect 0```
