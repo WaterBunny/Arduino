@@ -32,7 +32,7 @@
 ///////////////////////
 // General
 #define STATUS_LED 7 // Pin of status LED
-#define RECORDING_TIME 100 // Record data every x ms
+#define RECORDING_TIME 48 // Record data every x ms
 
 // Button
 #define BUTTON 3 // Pin of Button
